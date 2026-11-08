@@ -1,0 +1,8 @@
+{
+  "name": "高校地理マスター130問",
+  "short_name": "地理クイズ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a"
+}

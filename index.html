@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>高校地理マスター130問（オフライン版）</title>
+    
+
+
+    <style>
+      :root{color-scheme:dark;--bg:#0f172a;--panel:#1e293b;--line:#334155;--muted:#94a3b8;--brand:#5148e5;--brand2:#818cf8;--green:#059669;--red:#e11d48}
+      *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+      html,body{margin:0;min-height:100%;background:var(--bg);color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}
+      body{min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+      .hidden{display:none!important} i{display:none!important}
+      header{position:sticky;top:0;z-index:5;background:#0f172af2;border-bottom:1px solid #263449;padding:12px 14px;backdrop-filter:blur(10px)}
+      header>div{max-width:680px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+      header h1{font-size:15px;margin:0;font-weight:800;letter-spacing:.02em} header p{font-size:11px;color:var(--muted);margin:3px 0 0}
+      select{max-width:48%;background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:9px;padding:9px 8px;font-size:12px}
+      main{width:100%;max-width:680px;margin:auto;padding:18px 16px 22px;display:flex;flex-direction:column;justify-content:center;flex:1}
+      main>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:var(--muted);font-size:12px;font-weight:700}
+      #progressText{color:#a5b4fc;font-size:16px;font-weight:800} #categoryBadge{background:#273449;color:#cbd5e1;border:1px solid #475569;border-radius:30px;padding:4px 10px;font-size:11px}
+      button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 13px;font-weight:700;color:#f8fafc;background:#334155;touch-action:manipulation}
+      button:active{transform:scale(.98)} #bookmarkBtn,#resetBtn{background:transparent;color:#cbd5e1;padding:7px 4px;font-size:12px}
+      #progressBar{height:7px;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0;border-radius:8px;transition:width .25s}
+      main>div:nth-child(2){height:8px;background:#263449;border:1px solid #334155;border-radius:10px;padding:1px;margin-bottom:14px;overflow:hidden}
+      #cardContainer{width:100%;height:min(65vh,430px);min-height:300px;perspective:1000px;cursor:pointer;margin:4px 0 8px}
+      #cardInner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,.2,.2,1);border-radius:20px;box-shadow:0 18px 38px #0006}
+      #cardInner.rotate-y-180{transform:rotateY(180deg)}
+      #cardInner>div{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;padding:22px 18px;display:flex;flex-direction:column;justify-content:space-between;text-align:center;border:1px solid #475569;background:linear-gradient(145deg,#263449,#172033)}
+      #cardInner>div:nth-child(2){transform:rotateY(180deg);text-align:left;border:2px solid #6258ef;background:linear-gradient(145deg,#202b40,#111827)}
+      #cardQuestion{font-size:clamp(17px,4.5vw,22px);line-height:1.75;margin:20px 0;font-weight:800;color:#fff;overflow-wrap:anywhere}
+      #cardAnswer{font-size:clamp(17px,4.4vw,21px);font-weight:800;color:#6ee7b7;line-height:1.55;margin-bottom:10px;white-space:pre-line}
+      #cardExplanation{font-size:14px;color:#cbd5e1;line-height:1.8;white-space:pre-line;border-top:1px solid #475569;padding-top:10px}
+      #cardInner>div:nth-child(2)>div:nth-child(2){flex:1;overflow-y:auto;margin:8px 0;padding-right:4px}
+      #cardIdTag{font-size:11px;color:var(--muted)}
+      #gradingPanel,#resultPanel{margin-top:14px;border:1px solid #475569;border-radius:14px;background:#1e293beF;padding:14px}
+      #gradingPrompt{font-size:13px;color:#cbd5e1;text-align:center;margin:0 0 10px}
+      #gradingPanel>div{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+      #correctBtn{background:#059669;padding:14px 8px} #incorrectBtn{background:#e11d48;padding:14px 8px}
+      #resultPanel{text-align:center;border-color:#6258ef} #resultTitle{font-size:21px;margin:0 0 8px} #resultText{font-size:14px;line-height:1.7;color:#cbd5e1;white-space:pre-line;margin:0 0 14px}
+      #resultPanel>div{display:flex;flex-direction:column;gap:8px} #retryBtn{background:var(--brand)} #redoBtn{background:#f59e0b;color:#111827} #normalBtn{background:#475569}
+      #navigation{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:15px} #navigation button{flex:1;padding:14px 8px;background:#273449;border:1px solid #475569;font-size:13px} #navigation #nextBtn{background:var(--brand);border-color:var(--brand)} #navigation #shuffleBtn{flex:0 0 auto;color:#fbbf24}
+      footer{text-align:center;padding:10px;color:#94a3b8;font-size:10px;border-top:1px solid #263449}
+      @media(min-width:600px){main{padding:24px}#cardContainer{height:420px}#resultPanel>div{flex-direction:row;justify-content:center}#resultPanel button{padding:12px 16px}}
+      @media(max-height:700px){main{padding-top:10px;padding-bottom:10px}#cardContainer{height:54vh;min-height:260px}}
+    </style>
+
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+
+    <!-- ヘッダー (重ならないよう高さを最適化) -->
+    <header>
+        <div>
+            <div>
+                <div>
+                    <i></i>
+                </div>
+                <div>
+                    <h1>
+                        <span>高校地理マスター</span>
+                        <span>130問</span>
+                    </h1>
+                    <p>全14ページ完全対応</p>
+                </div>
+            </div>
+
+            <!-- カテゴリフィルター -->
+            <select id="categoryFilter">
+                <option value="all">全130問を表示</option>
+                <option value="disaster">1° 時事・災害 (1-13)</option>
+                <option value="lang">2° 言語 (14-27)</option>
+                <option value="climate">3° 気候・風・海流 (28-48)</option>
+                <option value="koppen">4° ケッペン気候区分 (49-65)</option>
+                <option value="rice">5° 三大穀物: 米 (66-76)</option>
+                <option value="wheat">6° 三大穀物: 小麦 (77-90)</option>
+                <option value="corn">7° 三大穀物: トウモロコシ (91-103)</option>
+                <option value="agri">8° 熱帯農業・環境 (104-117)</option>
+                <option value="desert">9° 砂漠・環境破壊 (118-130)</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- メインエリア（適切な上下余白を確保） -->
+    <main>
+
+        <!-- 進捗 & コントロール -->
+        <div>
+            <div>
+                <span id="progressText">1 / 130</span>
+                <span id="categoryBadge">時事・自然災害</span>
+            </div>
+            <div>
+                <button id="bookmarkBtn">
+                    <i></i>
+                    <span class="hidden">ブックマーク</span>
+                </button>
+                <button id="resetBtn" title="最初に戻る">
+                    <i></i>
+                    <span class="hidden">最初から</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div>
+            <div id="progressBar"></div>
+        </div>
+
+        <!-- 暗記カード本体 -->
+        <div id="cardContainer">
+            <div id="cardInner">
+                
+                <!-- カード表面（問題） -->
+                <div>
+                    <div>
+                        <span><i></i>QUESTION</span>
+                        <span>タップで裏返す</span>
+                    </div>
+
+                    <div>
+                        <h2 id="cardQuestion">
+                            質問読み込み中...
+                        </h2>
+                    </div>
+
+                    <div>
+                        <i></i>
+                        <span>タップして答え・解説を見る</span>
+                    </div>
+                </div>
+
+                <!-- カード裏面（答え＋解説） -->
+                <div>
+                    <div>
+                        <span><i></i>ANSWER</span>
+                        <span id="cardIdTag">Q.001</span>
+                    </div>
+
+                    <div>
+                        <div id="cardAnswer">
+                            答え
+                        </div>
+                        <div id="cardExplanation">
+                            解説
+                        </div>
+                    </div>
+
+                    <div>
+                        <span>もう一度タップで表に戻る</span>
+                        <i></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 正誤判定 -->
+        <section id="gradingPanel" class="hidden">
+            <p id="gradingPrompt">答えを確認して、自分の回答を判定してください。</p>
+            <div>
+                <button id="correctBtn">○ 正解</button>
+                <button id="incorrectBtn">× 不正解</button>
+            </div>
+        </section>
+
+        <!-- 結果・やり直し -->
+        <section id="resultPanel" class="hidden">
+            <h2 id="resultTitle">結果</h2>
+            <p id="resultText"></p>
+            <div>
+                <button id="retryBtn" class="hidden">間違えた問題をやり直す</button>
+                <button id="redoBtn" class="hidden">やり直し</button>
+                <button id="normalBtn" class="hidden">通常モードに戻る</button>
+            </div>
+        </section>
+
+        <!-- ナビゲーションボタン -->
+        <div id="navigation">
+            <button id="prevBtn">
+                <i></i>
+                <span>◀ 前へ</span>
+            </button>
+
+            <button id="shuffleBtn" title="ランダムシャッフル">
+                <i></i>
+                <span class="hidden">シャッフル</span>
+            </button>
+
+            <button id="nextBtn">
+                <span>次へ ▶</span>
+                <i></i>
+            </button>
+        </div>
+
+    </main>
+
+    <footer>
+        オフライン対応・通信不要 ｜ キーボード操作: [←] 前へ / [→] 次へ / [Space] 裏返し
+    </footer>
+
+    <script>
+        // PDF全14ページの全130問データセット
+        const rawCards = [
+            // --- 1° 時事・自然災害 (1-13) ---
+            { id: 1, cat: "disaster", catName: "時事・自然災害", q: "令和8年熊本地震の発生日時・規模（M）・最大震度・最大震度観測地点は？", a: "26.7.28(木) 16:27 / 7.1M / 最大震度7（宇城市、氷川町）", exp: "熊本地震では横ずれ断層により局所的な大揺れが発生した。" },
+            { id: 2, cat: "disaster", catName: "時事・自然災害", q: "令和8年熊本地震を引き起こした断層帯の名称とその分類ランクは？", a: "日奈久断層帯（Sランク分類）", exp: "10年前と同一の横ずれ断層。地震調査研究推進本部の認定による。" },
+            { id: 3, cat: "disaster", catName: "時事・自然災害", q: "主要活断層帯の30年以内の発生確率による4段階分類（S, A, Z, X）の定義は？", a: "S: 3%以上\nA: 0.1%以上3%未満\nZ: 0.1%未満\nX: 不明", exp: "主要活断層帯は全国14箇所認定されている。" },
+            { id: 4, cat: "disaster", catName: "時事・自然災害", q: "令和8年熊本地震の避難所問題として挙げられた熊本県小中学校体育館の冷暖房設置率は？", a: "56.2%", exp: "全国的に見ても低い水準であり、猛暑下の避難生活や車中泊の拡大が問題視された。" },
+            { id: 5, cat: "disaster", catName: "時事・自然災害", q: "阪神・淡路(95)、中越(04)、東日本(11)、熊本地震(16)、胆振東部(18)、能登半島(24)のマグニチュードは？", a: "阪神7.3 / 中越6.8 / 東日本9.0 / 熊本7.3 / 胆振6.7 / 能登7.6", exp: "過去の主要活断層・海溝型地震の規模。" },
+            { id: 6, cat: "disaster", catName: "時事・自然災害", q: "【最重要訂正】気象庁による「台風の上陸」と「台風の通過」の定義の違いは？", a: "上陸：台風の中心が「北海道・本州・四国・九州」の海岸に達した場合\n通過：中心が小さな島や半島を短時間で横切り再び海上に出た場合", exp: "定義上、沖縄県等に台風が到達しても「上陸」とは言えず「通過」となる（沖縄への上陸はあり得ない）。" },
+            { id: 7, cat: "disaster", catName: "時事・自然災害", q: "令和8年台風15号（8/11）が記録した1951年統計開始以来の初記録と最大瞬間風速は？", a: "茨城県への史上初の上陸 / 最大瞬間風速 29.3m/s（北茨城市、8月観測史上初）", exp: "関東・北陸方面に異例の経路で接近した。" },
+            { id: 8, cat: "disaster", catName: "時事・自然災害", q: "令和8年8月千葉県豪雨で観測された12時間降水量と発令された気象警報の記録は？", a: "12時間降水量348mm（観測史上最大） / 制度変更以来初のレベル5大雨特別警報（記録的短時間大雨情報25回）", exp: "令和2年7月豪雨以来の気象庁命名となった。" },
+            { id: 9, cat: "disaster", catName: "時事・自然災害", q: "令和8年8月千葉県豪雨の被害中心となった「内水氾濫」とはどういう現象か？", a: "排水施設の処理能力（通常50〜60mm/h想定）を超え、水が地上にあふれる現象", exp: "河川の堤防が越水・決壊する「外水氾濫」ではなく都市型氾濫が中心であった。" },
+            { id: 10, cat: "disaster", catName: "時事・自然災害", q: "令和8年8月千葉県豪雨の原因となった「モンスーンジャイア」とは何か？", a: "南西季節風と太平洋高気圧の南縁の東風が合流してできる「反時計回目の大気の渦」", exp: "関東地方に東から湿った暖かい空気を大量流入させた。" },
+            { id: 11, cat: "disaster", catName: "時事・自然災害", q: "偏西風の蛇行によって日本列島上空で発生する冷たい空気の渦を何というか？", a: "寒冷渦（かんれいうず）", exp: "湿った暖気と寒冷渦の冷気が激しく衝突し、積乱雲が次々と発生して線状降水帯を形成した。" },
+            { id: 12, cat: "disaster", catName: "時事・自然災害", q: "地震調査研究推進本部が認める日本国内の主要活断層帯の数は全部でいくつか？", a: "14箇所", exp: "全国に分布する活断層帯の評価を行っている。" },
+            { id: 13, cat: "disaster", catName: "時事・自然災害", q: "令和8年8月千葉県豪雨で線状降水帯を局所形成させた3つの複合要因は？", a: "①モンスーンジャイアによる湿暖気流入 ②寒冷渦による冷気流入 ③暖気と冷気の衝突による積乱雲連続発生", exp: "集中豪雨を引き起こす典型的な大気状況。" },
+
+            // --- 2° 言語 (14-27) ---
+            { id: 14, cat: "lang", catName: "言語", q: "「公用語」と「母語」の定義の違いをそれぞれ述べよ。", a: "公用語：その国で公式に使われる言語\n母語：子供のころから周囲の人間が話すのを聞いて自然に身につけた言語", exp: "アジア・アフリカでは旧宗主国の言語が公用語になる場合が多い。" },
+            { id: 15, cat: "lang", catName: "言語", q: "世界に存在する言語のおおよその総数はいくつか？", a: "7,100以上", exp: "多数の言語が存在するが、広く用いられる言語は一部に限られる。" },
+            { id: 16, cat: "lang", catName: "言語", q: "「公用語話者数」が多い世界の言語ランキング トップ5は？", a: "1. 英語 / 2. 中国語 / 3. スペイン語 / 4. アラビア語 / 5. フランス語", exp: "国際交渉や商取引で広く流通する言語が上位に入る。" },
+            { id: 17, cat: "lang", catName: "言語", q: "「母語話者数」が多い世界の言語ランキング トップ6は？", a: "1. 中国語 / 2. スペイン語 / 3. 英語 / 4. ヒンディー語 / 5. アラビア語 / 6. ベンガル語", exp: "人口規模の大きい国・地域の言語が母語話者数上位を占める。" },
+            { id: 18, cat: "lang", catName: "言語", q: "シンガポールで制定されている4つの公用語は？", a: "マレー語、中国語、タミル語、英語", exp: "多民族国家であり、各民族の言語と共通語の英語が公用語に指定されている。" },
+            { id: 19, cat: "lang", catName: "言語", q: "スイスで制定されている4つの公用語は？", a: "ロマンシュ語、ドイツ語、フランス語、イタリア語", exp: "地域ごとに異なる言語が話されている。" },
+            { id: 20, cat: "lang", catName: "言語", q: "カナダの2つの公用語は何か？", a: "英語、フランス語", exp: "ケベック州を中心にフランス語話者が多いため。" },
+            { id: 21, cat: "lang", catName: "言語", q: "国際連合（国連）の公式用語（公用語）6つを答えよ。", a: "ロシア語、中国語、英語、フランス語、スペイン語、アラビア語", exp: "国連の会議や文書で使用される。" },
+            { id: 22, cat: "lang", catName: "言語", q: "言語学における「語族」と「語派」の定義の違いは？", a: "語族：同一の祖語から分かれて発達した諸言語の大きなグループ\n語派：一つの語族の中でより深い親戚関係を持つ諸言語群", exp: "言語の親縁関係に基づく分類。" },
+            { id: 23, cat: "lang", catName: "言語", q: "中国語が世界で強力な言語的影響力を持つ経済的背景は？", a: "中国という巨大単一市場で用いられているため。", exp: "経済規模に伴う言語需要。" },
+            { id: 24, cat: "lang", catName: "言語", q: "スペイン語が広く通用する主要な2つの地域・国は？", a: "ラテンアメリカ諸国、アメリカ合衆国内のヒスパニック社会", exp: "米国内でも話者人口が急速拡大。" },
+            { id: 25, cat: "lang", catName: "言語", q: "インドネシア語（話者数2億7000万人）が日本人にとって身につけやすいとされる表記と発音の特徴は？", a: "アルファベット表記であり、発音が日本語のローマ字読みに近く親しみやすいため。", exp: "東南アジアでの需要が高まっている。" },
+            { id: 26, cat: "lang", catName: "言語", q: "ベトナム語の需要が世界的に高まっている経済的背景は？", a: "中国からの生産拠点（工場）移転が進んでいるため。", exp: "サプライチェーン再編の重要拠点の言語。" },
+            { id: 27, cat: "lang", catName: "言語", q: "フランス語が「2050年に世界で最も話される言語になる」と試算される背景は？", a: "人口爆発が続く西・中部アフリカ諸国で広く通用しているため。", exp: "旧宗主国言語としてアフリカで広範に定着。" },
+
+            // --- 3° 気候・風・海流 (28-48) ---
+            { id: 28, cat: "climate", catName: "気候・風・海流", q: "「気候」の定義と、気候に影響を与える「気候要素」の代表例は？", a: "気候：一年を周期として毎年繰り返される大気の総合的な状態\n気候要素：気温、降水量、風、湿度、日照時間など", exp: "気候を形づくる基本要素。" },
+            { id: 29, cat: "climate", catName: "気候・風・海流", q: "世界最高気温の記録（56.7℃）が観測された場所はどこか？", a: "デスヴァレー（アメリカ合衆国）", exp: "強烈な日差しと乾燥した地形により極温となる。" },
+            { id: 30, cat: "climate", catName: "気候・風・海流", q: "地球上の最低気温記録（-89.2℃）と、人が定住する地域の最低気温（-67.8℃）の観測地は？", a: "地球最低：南極のボストーク基地\n定住地最低：ロシアのオイミャコン", exp: "極寒地帯の気候極値。" },
+            { id: 31, cat: "climate", catName: "気候・風・海流", q: "地球の大気循環細胞（ハドレー循環・フェレル循環・極循環）の配置順（赤道から極へ）は？", a: "赤道 → ハドレー循環 → フェレル循環 → 極循環 → 極", exp: "風は高圧帯から低圧帯に向かって吹く。" },
+            { id: 32, cat: "climate", catName: "気候・風・海流", q: "「季節風（モンスーン）」と「恒常風」の定義の違いは？", a: "季節風：季節によって向きを変える風\n恒常風：年間を通じて同一の向きに吹く風", exp: "ユーラシア大陸・太平洋・インド洋間の季節風が代表的。" },
+            { id: 33, cat: "climate", catName: "気候・風・海流", q: "「比熱」の定義と、陸と海の比熱の違いがもたらす季節風の風向き（夏・冬）は？", a: "比熱：物質1gの温度を1℃上げる熱量\n夏：海から大陸へ（陸が温まり低気圧）\n冬：大陸から海へ（陸が冷えて高気圧）", exp: "陸は比熱が小さく温まりやすく冷めやすい。" },
+            { id: 34, cat: "climate", catName: "気候・風・海流", q: "世界で最も年間降水量が多いチェラプンジ（インド）で雨が激しい地形的理由は？", a: "夏にベンガル湾から吹くモンスーンの湿った空気が高い山岳にぶつかるため。", exp: "世界屈指の多雨地域。" },
+            { id: 35, cat: "climate", catName: "気候・風・海流", q: "世界で最も年間降水量が少ないアントファガスタ（チリ）に形成される砂漠のタイプは？", a: "海岸砂漠（アタカマ砂漠）", exp: "寒流のペルー海流により下層の空気が冷やされ安定するため。" },
+            { id: 36, cat: "climate", catName: "気候・風・海流", q: "海流の循環方向は、北半球と南半球でそれぞれどのような回り方をするか？", a: "北半球：時計回り / 南半球：反時計回り", exp: "風とコリオリの力の影響。" },
+            { id: 37, cat: "climate", catName: "気候・風・海流", q: "暖流と寒流の一般的な定義（どこからどこへ流れるか）と熱エネルギー輸送の役割は？", a: "暖流：低緯度から高緯度へ流れる（熱を供給）\n寒流：高緯度から低緯度へ流れる", exp: "低緯度の余剰熱エネルギーを高緯度へ運ぶ。" },
+            { id: 38, cat: "climate", catName: "気候・風・海流", q: "西欧沿岸部を流れる「北大西洋海流」と、アラスカ南部を流れる海流はそれぞれ暖流か寒流か？", a: "北大西洋海流：暖流\nアラスカ海流：暖流", exp: "高緯度のわりに沿岸地域を温暖に保つ。" },
+            { id: 39, cat: "climate", catName: "気候・風・海流", q: "モロッコ付近（カナリア海流）、ペルー周辺（ペルー海流）、アフリカ南西部（ベンゲラ海流）はそれぞれ暖流か寒流か？", a: "すべて寒流", exp: "沿岸部に海岸砂漠を形成しやすい。" },
+            { id: 40, cat: "climate", catName: "気候・風・海流", q: "【最重要訂正】野生のペンギン（全18種）が赤道直下のガラパゴス諸島に生息できる理由は？", a: "ニュージーランド原産のペンギンが、南極から赤道方向へ吹く反時計回りの寒流（ペルー海流）に乗して広範囲に渡ったため。", exp: "南半球の寒流が冷たい海水と豊富なエサをもたらすため赤道下でも生息できる。" },
+            { id: 41, cat: "climate", catName: "気候・風・海流", q: "北半球の中緯度上空を一年中西から東へ吹く代表的な恒常風は何か？", a: "偏西風", exp: "気候や飛行機のフライト時間に影響を与える。" },
+            { id: 42, cat: "climate", catName: "気候・風・海流", q: "赤道収束帯（赤道低圧帯）に向かって低緯度地域を吹く恒常風を何というか？", a: "貿易風", exp: "北東貿易風と南東貿易風が存在する。" },
+            { id: 43, cat: "climate", catName: "気候・風・海流", q: "極付近から高緯度低圧帯に向かって吹き出す恒常風を何というか？", a: "極東風", exp: "極高圧帯から外側へ向かう冷たい風。" },
+            { id: 44, cat: "climate", catName: "気候・風・海流", q: "アメリカ西海岸沖を流れるカリフォルニア海流は暖流か寒流か？", a: "寒流", exp: "サンフランシスコなどの夏の冷涼な気候に影響する。" },
+            { id: 45, cat: "climate", catName: "気候・風・海流", q: "低緯度と高緯度の気温差が生じる本質的な根本理由は何か？", a: "緯度による太陽放射エネルギー（受熱量）の違い", exp: "低緯度ほど単位面積あたりの受熱量が大きい。" },
+            { id: 46, cat: "climate", catName: "気候・風・海流", q: "寒流が流れる沿岸部で上昇気流が起きにくく降水が少ない物理的メカニズムは？", a: "冷たい海面で下層の空気が冷やされて重くなり、気層が安定（逆転層）して上昇気流が生じないため。", exp: "海岸砂漠の形成メカニズム。" },
+            { id: 47, cat: "climate", catName: "気候・風・海流", q: "大気循環において「中緯度高圧帯（亜熱帯高圧帯）」が形成される緯度帯と気候への影響は？", a: "緯度20〜30度付近 / 下降気流が発生し雲ができにくいため乾燥砂漠が形成される", exp: "サハラ砂漠などが代表例。" },
+            { id: 48, cat: "climate", catName: "気候・風・海流", q: "ペンギンが北半球に渡ることができなかった地理的理由は？", a: "南半球の寒流が赤道付近で途切れ、温かい熱帯の海がバリアとなったため。", exp: "ペンギンは南半球原産の生物。" },
+
+            // --- 4° ケッペンの気候区分 (49-65) ---
+            { id: 49, cat: "koppen", catName: "ケッペン気候区分", q: "「ケッペンの気候区分」とは何か？また都道府県などの狭い範囲の比較に適さない理由は？", a: "植生環境のよく似た地域をグループ化した気候区分 / 地球規模の植生に基づいているため狭い地域の比較には適さない。", exp: "植物の分布を基に考案された。" },
+            { id: 50, cat: "koppen", catName: "ケッペン気候区分", q: "ケッペンの気候区分における熱帯(A), 温帯(C), 冷帯(D)の最寒月平均気温の判定基準は？", a: "A (熱帯): 18℃以上\nC (温帯): -3℃以上 18℃未満\nD (冷帯): -3℃未満（かつ最暖月10℃以上）", exp: "-3℃は積雪が根雪にならない限界。" },
+            { id: 51, cat: "koppen", catName: "ケッペン気候区分", q: "【最重要訂正】ケッペンの気候区分における寒帯(E)の正確な判定基準は？", a: "最暖月平均気温が 10℃未満", exp: "10℃未満は樹木が生育できない限界（森林限界）を意味する。" },
+            { id: 52, cat: "koppen", catName: "ケッペン気候区分", q: "【最重要訂正】樹林気候(A,C,D)の2文字目「s」と「w」の降水量の定義は？", a: "s (夏乾季): 最多雨月降水量が最小雨月降水量の 3倍以下\nw (冬乾季): 最多雨月降水量が最小雨月降水量の 10倍以下", exp: "sは夏乾季、wは冬乾季を意味する。" },
+            { id: 53, cat: "koppen", catName: "ケッペン気候区分", q: "樹林気候の2文字目「f」と「m」の意味はそれぞれ何か？", a: "f: 年中多雨（変化が小さい）\nm: fとwの中間（冬に弱い乾季）", exp: "熱帯モンスーン気候(Am)や温暖湿潤気候(Cfa)など。" },
+            { id: 54, cat: "koppen", catName: "ケッペン気候区分", q: "無樹林気候(B,E)の2文字目 S, W, T, F はそれぞれ何の略か？", a: "S: ステップ / W: 砂漠 / T: ツンドラ / F: 永久凍土(氷雪)", exp: "BS, BW, ET, EF に区分される。" },
+            { id: 55, cat: "koppen", catName: "ケッペン気候区分", q: "Cf（温帯湿潤）に区分される場合の3文字目「a」と「b」の最暖月平均気温の基準は？", a: "a: 最暖月平均気温 22℃以上\nb: 最暖月平均気温 22℃未満", exp: "Cfa（温暖湿潤気候）とCfb（西岸海洋性気候）。" },
+            { id: 56, cat: "koppen", catName: "ケッペン気候区分", q: "温帯夏雨気候(Cw)の気候・植生・土壌の特徴は？", a: "気候：沿岸部に比べ年較差が小さく夏蒸し暑い / 植生：照葉樹（カシ・クス・シイ） / 土壌：褐色森林土", exp: "米が栽培される。" },
+            { id: 57, cat: "koppen", catName: "ケッペン気候区分", q: "温暖湿潤気候(Cfa)の植生と土壌の特徴は？", a: "植生：広葉樹（カシ・シイ・ブナ・ナラ）と針葉樹（モミ・マツ）の混交林 / 土壌：褐色森林土", exp: "四季が明瞭で年中降水がある。" },
+            { id: 58, cat: "koppen", catName: "ケッペン気候区分", q: "地中海性気候(Cs)の夏と冬の気候特徴と代表的な作物は？", a: "気候：夏は乾燥して高温、冬は湿潤で温暖 / 作物：オリーブ、ブドウ、柑橘類など", exp: "夏は中緯度高圧帯におおわれる。" },
+            { id: 59, cat: "koppen", catName: "ケッペン気候区分", q: "サバナ気候(Aw)の植生と代表的な土壌は？", a: "植生：丈の長い草原と散在する樹木（アカシア・バオバブ） / 土壌：ラトソル", exp: "雨季と乾季が明瞭。" },
+            { id: 60, cat: "koppen", catName: "ケッペン気候区分", q: "ステップ気候(BS)の降水量範囲・植生・土壌は？", a: "降水量：250〜750mm/y / 植生：丈の短い草原 / 土壌：栗色土・黒土", exp: "日較差・年較差が大きい。" },
+            { id: 61, cat: "koppen", catName: "ケッペン気候区分", q: "亜寒帯湿潤気候(Df)が北半球にのみ存在する理由と、その植生・土壌は？", a: "理由：南半球に対応する高緯度の大陸が存在しないため / 植生：タイガ（カラマツ・モミ・トウヒ） / 土壌：ポドゾル", exp: "小麦が主として栽培される。" },
+            { id: 62, cat: "koppen", catName: "ケッペン気候区分", q: "熱帯雨林気候(Af)のスコールとはどんな雨か？植生構造も述べよ。", a: "スコール：強風を伴う対流性降雨 / 植生：常緑広葉樹（超高木・高木・低木層の3層構造、高木は30〜50m）", exp: "高温多湿で日較差が大きい。" },
+            { id: 63, cat: "koppen", catName: "ケッペン気候区分", q: "オーストラリア大陸の全陸地に占める乾燥帯（B）の割合はどれくらいか？", a: "57.2%", exp: "オーストラリアは「乾燥大陸」と呼ばれる。" },
+            { id: 64, cat: "koppen", catName: "ケッペン気候区分", q: "砂漠気候(BW)の年間降水量と植生・土壌の特徴は？", a: "降水量：250mm未満 / 植生：乾燥耐性のサボテン等のみ / 土壌：腐植層のないアルカリ性の砂漠土", exp: "日較差が非常に大きい。" },
+            { id: 65, cat: "koppen", catName: "ケッペン気候区分", q: "ツンドラ気候(ET)と氷雪気候(EF)の景観と植生の違いは？", a: "ET: 最暖月0〜10℃未満、夏に苔類や地衣類が生育\nEF: 最暖月0℃未満、一年中氷雪におおわれ植物生育不可", exp: "寒帯の2大区分。" },
+
+            // --- 5° 三大穀物: 米 (66-76) ---
+            { id: 66, cat: "rice", catName: "三大穀物: 米", q: "米の栽培に必要な年間降水量条件と発祥地（原産地）は？", a: "降水量：1000mm以上\n発祥地：インド東部、雲南（中国）、ミャンマー、タイ北部", exp: "紀元前4000年頃から栽培開始。" },
+            { id: 67, cat: "rice", catName: "三大穀物: 米", q: "米の生産量ランキング 世界トップ6の国はどこか？", a: "1. インド / 2. 中国 / 3. バングラデシュ / 4. インドネシア / 5. ベトナム / 6. タイ", exp: "モンスーンアジアを中心に生産。" },
+            { id: 68, cat: "rice", catName: "三大穀物: 米", q: "マダガスカルで米が例外的に栽培・消費されている人種的・歴史的理由は？", a: "先住民がボルネオ島から移住したマレー系コーカソイドであるため。", exp: "アジア型の米食文化が定着した。" },
+            { id: 69, cat: "rice", catName: "三大穀物: 米", q: "世界の米生産量の約80%を占める品種は何か？", a: "インディカ米（粘り気が少ない長粒種）", exp: "ジャポニカ米（短粒種）は20%程度。" },
+            { id: 70, cat: "rice", catName: "三大穀物: 米", q: "水田で米を連作しても連作障害が起きないメカニズムは？", a: "毎年の水の入れ替え（灌漑・排水）によって土壌養分や病害虫が流し去られるため。", exp: "毎年同じ耕地で生産可能。" },
+            { id: 71, cat: "rice", catName: "三大穀物: 米", q: "米が高い人口扶養能力を持つ農学的・気候的理由は？", a: "連作可能であり、気温条件次第で年に何度も作付け（二期作など）が可能であるため。", exp: "東・東南・南アジアの膨大な人口を支える。" },
+            { id: 72, cat: "rice", catName: "三大穀物: 米", q: "米の生産量全体に対する輸出量の割合はおよそ何%か？", a: "約 6.5%", exp: "主に自給的作物として生産国で消費される。" },
+            { id: 73, cat: "rice", catName: "三大穀物: 米", q: "米の国際貿易（輸出）比率が低い2つの主な理由は？", a: "①生産国自身の大幅な自給消費に回るため\n②アジア圏以外での需要が希薄であるため", exp: "自給的作物の性質が強い。" },
+            { id: 74, cat: "rice", catName: "三大穀物: 米", q: "米の栽培が主に行われている気候帯の代表例を3つ挙げよ。", a: "Cw, Cfa, Aw (Af, Amも含む)", exp: "年間降水量1,000mm以上の地域。" },
+            { id: 75, cat: "rice", catName: "三大穀物: 米", q: "日本の主食であるジャポニカ米とインディカ米の形状と味の特徴の違いは？", a: "ジャポニカ米：短粒で粘り気が強い\nインディカ米：長粒でパサつき粘り気が少ない", exp: "世界ではインディカ米が標準的。" },
+            { id: 76, cat: "rice", catName: "三大穀物: 米", q: "アジアのデルタ（三角州）地帯で米の栽培が特に盛んな地形的要因は？", a: "大河川による肥沃な土壌の客土と豊富で安定した水資源が得られるため。", exp: "メコン川、ガンジス川などのデルタ。" },
+
+            // --- 6° 三大穀物: 小麦 (77-90) ---
+            { id: 77, cat: "wheat", catName: "三大穀物: 小麦", q: "小麦の栽培に必要な気候条件と年間降水量は？", a: "温帯のやや冷涼な地域 / 年間降水量 500〜750mm程度", exp: "米に比べて乾燥に強い。" },
+            { id: 78, cat: "wheat", catName: "三大穀物: 小麦", q: "小麦の原産地（発祥地）はどこか？", a: "カスピ海南岸等の中東地域", exp: "乾燥地帯原産の作物。" },
+            { id: 79, cat: "wheat", catName: "三大穀物: 小麦", q: "小麦の生産量ランキング 世界トップ6の国は？", a: "1. 中国 / 2. インド / 3. ロシア / 4. アメリカ / 5. オーストラリア / 6. フランス", exp: "広大な面積と低い人口密度の地域で粗放的に栽培。" },
+            { id: 80, cat: "wheat", catName: "三大穀物: 小麦", q: "「冬小麦」と「春小麦」の播種・収穫時期の違いと特徴は？", a: "冬小麦：秋〜冬に種まき、翌春〜夏に収穫（収量が多い）\n春小麦：春に種まき、同年秋に収穫（パンに適する）", exp: "本来越年性のため冬小麦の生産量が圧倒的。" },
+            { id: 81, cat: "wheat", catName: "三大穀物: 小麦", q: "小麦の輸出量ランキング 上位3か国は？", a: "1. ロシア / 2. オーストラリア / 3. カナダ", exp: "小麦は生産量の約半分が輸出に回る商品作物。" },
+            { id: 82, cat: "wheat", catName: "三大穀物: 小麦", q: "オーストラリアが小麦の国際輸出において非常に有利とされる地理的理由は？", a: "南半球に位置し北半球と季節が逆なため、北半球の「端境期」に大規模出荷ができるため。", exp: "高値で有利に取引される。" },
+            { id: 83, cat: "wheat", catName: "三大穀物: 小麦", q: "「端境期（はざかいき）」の定義は何か？", a: "収穫期と収穫期の間の時期（市場に出回る量が少ない時期）", exp: "季節が逆の南半球の強み。" },
+            { id: 84, cat: "wheat", catName: "三大穀物: 小麦", q: "「企業的穀物農業」の定義は？", a: "広大な土地での大規模農業機械による粗放的な穀物の栽培を中心とする農業", exp: "ステップ気候(BS)等で行われる。" },
+            { id: 85, cat: "wheat", catName: "三大穀物: 小麦", q: "ウクライナやアメリカのグレートプレーンズで企業的穀物農業が行われる土壌的理由は？", a: "チェルノーゼムやプレーリー土などの肥沃な「黒土」が分布しているため。", exp: "広大で肥沃な土壌基盤。" },
+            { id: 86, cat: "wheat", catName: "三大穀物: 小麦", q: "ロシアによるウクライナ侵攻が世界の小麦事情や途上国に与えた影響は？", a: "両国が中東・アフリカ等の途上国向け小麦輸出の中核であるため、国際価格の高騰と食料不安を引き起こした。", exp: "日本のうどん等の価格高騰にも影響。" },
+            { id: 87, cat: "wheat", catName: "三大穀物: 小麦", q: "小麦栽培が主に行われる気候帯の代表例は？", a: "BS（ステップ気候）、Df（亜寒帯湿潤気候）、Cw, Cfaなど", exp: "やや冷涼で乾燥した地域。" },
+            { id: 88, cat: "wheat", catName: "三大穀物: 小麦", q: "チェルノーゼム（黒土）の主な分布地域を2つ挙げよ。", a: "ウクライナ周辺、南北アメリカのプレッピー・パンパ地域など", exp: "世界有数の肥沃な穀倉地帯。" },
+            { id: 89, cat: "wheat", catName: "三大穀物: 小麦", q: "アメリカ合衆国における春小麦帯と冬小麦帯の主な分布地域は？", a: "春小麦帯：北部の寒冷な南北ダコタ州など\n冬小麦帯：中央部のカンザス州など", exp: "気候（冬の厳しさ）に応じた品種使い分け。" },
+            { id: 90, cat: "wheat", catName: "三大穀物: 小麦", q: "オーストラリアの主要な小麦栽培地帯（自給・輸出用）は大陸のどの地域か？", a: "南東部（マレー・ダーリング盆地周辺）および南西部", exp: "地中海性気候やステップ気候の広がる地域。" },
+
+            // --- 7° 三大穀物: トウモロコシ (91-103) ---
+            { id: 91, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの栽培気候条件と原産地はどこか？", a: "気候：気温や降水量に比較的幅広く対応可能\n原産地：中南米（メキシコ南西部オアハカ近辺）", exp: "環境適応力が非常に高い。" },
+            { id: 92, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの生産量ランキング 世界トップ6の国は？", a: "1. アメリカ / 2. 中国 / 3. ブラジル / 4. アルゼンチン / 5. インド / 6. ウクライナ", exp: "アメリカ大陸の国や大国が中心。" },
+            { id: 93, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの輸出量ランキング 上位3か国はどこか？", a: "1. ブラジル / 2. アメリカ / 3. ウクライナ", exp: "生産量全体の16%が輸出用。" },
+            { id: 94, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの生産量が三大穀物の中で最も多い理由は？", a: "少人数で広大な土地を管理でき、かつ飼料・工業・食用など用途が幅広く需要が大きいため。", exp: "世界最大の穀物生産量。" },
+            { id: 95, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの4つの種類（デント種・フリント種・スイート種・ポップ種）の用途は？", a: "デント種：生産量最多、コーンスターチ用\nフリント種：粉加工用\nスイート種：そのまま食べる野菜\nポップ種：ポップコーン用", exp: "工業・飼料用途はデント種が主体。" },
+            { id: 96, cat: "corn", catName: "三大穀物: トウモロコシ", q: "「コーンスターチ」の3つの主要用途は？", a: "①家畜の飼料 ②糖化製品（清涼飲料水・調味料） ③加工澱粉（冷凍食品・段ボール接着剤等）", exp: "トウモロコシ粉を処理して得られる澱粉。" },
+            { id: 97, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシの主要栽培地域「コーンベルト」に含まれるアメリカの代表的な州は？", a: "アイオワ州、イリノイ州、ネブラスカ州、ミネソタ州", exp: "ブラジルのマットグロッソ州やアルゼンチンのパンパでも大規模栽培。" },
+            { id: 98, cat: "corn", catName: "三大穀物: トウモロコシ", q: "トウモロコシ栽培が行われる気候帯（ケッペンの区分）の範囲は？", a: "Am, BS, Cw, Cfa, Df など幅広く適応", exp: "小麦の栽培地域と重複しやすい。" },
+            { id: 99, cat: "corn", catName: "三大穀物: トウモロコシ", q: "「バイオエタノール」の定義は何か？", a: "発酵させたサトウキビ・トウモロコシ・廃材などのバイオマス資源を蒸留して製造したエタノール", exp: "化石燃料の代替品。" },
+            { id: 100, cat: "corn", catName: "三大穀物: トウモロコシ", q: "バイオエタノールの「第一世代」と「第二世代」の原料の違いは？", a: "第一世代：糖質や澱粉などの食料由来原料\n第二世代：廃材などの非食料由来原料", exp: "第一世代はガソリン代替燃料に使用。" },
+            { id: 101, cat: "corn", catName: "三大穀物: トウモロコシ", q: "バイオエタノールが二酸化炭素を増やさない「再生可能エネルギー」とされる理屈は？", a: "生育中に光合成で吸収した大気中のCO2と、燃焼で排出されるCO2が相殺されるため（カーボンニュートラル）。", exp: "大気中のCO2量を増加させない。" },
+            { id: 102, cat: "corn", catName: "三大穀物: トウモロコシ", q: "第一世代バイオエタノールの需要拡大がもたらした穀物市場への問題点は？", a: "トウモロコシが燃料用に回ることで食料・飼料用価格が急騰した点。", exp: "食料問題とのトレードオフ。" },
+            { id: 103, cat: "corn", catName: "三大穀物: トウモロコシ", q: "ブラジルにおいてトウモロコシ栽培の急速な拡大がみられる地域は？", a: "マットグロッソ州（セラード地域）", exp: "大豆やトウモロコシの大規模企業的栽培。" },
+
+            // --- 8° 熱帯農業・環境問題 (104-117) ---
+            { id: 104, cat: "agri", catName: "熱帯農業・環境", q: "「焼畑農業」の定義と特徴は？", a: "森林を焼き払い草木灰を肥料として同じ土地で作付けせず、土壌の回復を行いながら進める自給的農業", exp: "適切なら持続可能。" },
+            { id: 105, cat: "agri", catName: "熱帯農業・環境", q: "焼畑農業で主に作られるイモ類「キャッサバ」の生産量世界トップ3の国は？", a: "1位: ナイジェリア / 2位: コンゴ民主共和国 / 3位: タイ", exp: "熱帯地域の貴重な主食。" },
+            { id: 106, cat: "agri", catName: "熱帯農業・環境", q: "「プランテーション農業」の定義と主な栽培作物は？", a: "高温多湿を生かし大規模農園で世界市場向けの商品作物を単一栽培（モノカルチャー）する農業\n作物：カカオ、コーヒー、バナナ、油やしなど", exp: "資本主義的農園開発。" },
+            { id: 107, cat: "agri", catName: "熱帯農業・環境", q: "カカオ豆の生産量世界トップ3の国と原産地は？", a: "1位: コートジボワール / 2位: ガーナ / 3位: インドネシア\n原産地：熱帯アメリカ", exp: "西アフリカで生産が非常に盛ん。" },
+            { id: 108, cat: "agri", catName: "熱帯農業・環境", q: "「モノカルチャー経済」の定義と経済的リスク2つは？", a: "特定の商品作物や天然資源の輸出に依存した経済\nリスク：①国際価格や天候の変動で経済が不安定化 ②食料自給率低下による輸入依存", exp: "経済安全保障上の問題。" },
+            { id: 109, cat: "agri", catName: "熱帯農業・環境", q: "2010〜2020年の間に世界で減少した森林面積（4700万ha超）は日本の面積と比べてどのくらいか？", a: "日本の全土面積（約3780万ha）よりも大きい", exp: "地球規模の森林喪失。" },
+            { id: 110, cat: "agri", catName: "熱帯農業・環境", q: "熱帯林が持つのに破壊が懸念されている環境的・医療的価値2つは？", a: "①地球上の全生物種の約半数が生息 ②西洋医薬の原料の25%を供給", exp: "生態系・創薬の宝庫。" },
+            { id: 111, cat: "agri", catName: "熱帯農業・環境", q: "スマトラ島・カリマンタン島（インドネシア）で熱帯林を伐採して造成されている農園と生成物は？", a: "油やし（オイルパーム）農園 / パーム油", exp: "森林破壊の主要因。" },
+            { id: 112, cat: "agri", catName: "熱帯農業・環境", q: "パーム油が「見えない油」と呼ばれる理由は？", a: "マーガリン、菓子、石鹸、化粧品等に広く使われるが、加工されて原材料名に表示されないことが多いため。", exp: "身近な各種製品に潜む。" },
+            { id: 113, cat: "agri", catName: "熱帯農業・環境", q: "パーム油が産業界で幅広く重宝される2つの理由は？", a: "①固めても溶かしても使える万能性\n②油やしが一度植栽すれば年間を通じて絶えず収穫可能なこと", exp: "高い生産効率。" },
+            { id: 114, cat: "agri", catName: "熱帯農業・環境", q: "適切な森林管理と木材流通を認証する制度マーク「FSC認証」の「FSC」とは？", a: "森林管理協議会（Forest Stewardship Council）", exp: "持続可能な木材利用の証。" },
+            { id: 115, cat: "agri", catName: "熱帯農業・環境", q: "持続可能なパーム油の調達を推進する組織「RSPO」とは何の略か？", a: "持続可能なパーム油のための円卓会議（Roundtable on Sustainable Palm Oil）", exp: "環境配慮の国際枠組み。" },
+            { id: 116, cat: "agri", catName: "熱帯農業・環境", q: "熱帯林破壊の4大原因（何のために伐採されているか）は？", a: "①商業伐採 ②大規模農地への転用 ③ダム建設 ④鉱山開発", exp: "人間活動による過剰利用。" },
+            { id: 117, cat: "agri", catName: "熱帯農業・環境", q: "熱帯林破壊がもたらす4つの重大な問題は？", a: "①自然災害（洪水等）の増加 ②木材資源の枯渇 ③生態系への悪影響 ④地球温暖化の加速", exp: "地球環境全体に与える危機。" },
+
+            // --- 9° 砂漠・環境破壊 (118-130) ---
+            { id: 118, cat: "desert", catName: "砂漠・環境破壊", q: "世界の砂漠における「岩石砂漠・礫砂漠」と「砂砂漠」の存在割合は？", a: "岩石砂漠・礫砂漠：約 80%\n砂砂漠：約 20%", exp: "砂浜のような砂砂漠はわずか2割。" },
+            { id: 119, cat: "desert", catName: "砂漠・環境破壊", q: "砂漠の成因による4つの分類（a〜d）は何か？", a: "(a) 亜熱帯砂漠 / (b) 内陸砂漠 / (c) 海岸砂漠 / (d) 雨陰砂漠", exp: "異なる気候・地理要因で発生。" },
+            { id: 120, cat: "desert", catName: "砂漠・環境破壊", q: "亜熱帯砂漠と内陸砂漠が形成されるメカニズムは？", a: "亜熱帯砂漠：年間を通じて中緯度高圧帯（下降気流）に覆われるため\n内陸砂漠：海から遠く水蒸気が届かないため", exp: "サハラ砂漠(亜熱帯)、ゴビ砂漠(内陸)。" },
+            { id: 121, cat: "desert", catName: "砂漠・環境破壊", q: "海岸砂漠と雨陰砂漠が形成されるメカニズムは？", a: "海岸砂漠：沖合の寒流により下層の空気に気温逆転現象が起きるため\n雨陰砂漠：高い山脈により湿った空気が遮られるため", exp: "アタカマ砂漠(海岸)、パタゴニア(雨陰)。" },
+            { id: 122, cat: "desert", catName: "砂漠・環境破壊", q: "砂漠で植物が生育し人間が生活できる淡水が得られる場所と、代表的な都市例2つは？", a: "場所：オアシス\n都市例：タシュケント（ウズベキスタン）、ラスベガス（アメリカ）", exp: "湧水や外来河川に依存。" },
+            { id: 123, cat: "desert", catName: "砂漠・環境破壊", q: "「オアシス農業」の定義と、利用される地下水路の呼称は？", a: "定義：外来河川、湧水、地下水路などを利用して行う灌漑農業\n地下水路：カナート（イラン等）", exp: "乾燥地帯の伝統的農業。" },
+            { id: 124, cat: "desert", catName: "砂漠・環境破壊", q: "強力なモータで地下水を汲み上げスプリンクラーで散水する農法を何というか？", a: "センターピボット（散水灌漑）", exp: "小麦やトウモロコシの大量生産に利用。" },
+            { id: 125, cat: "desert", catName: "砂漠・環境破壊", q: "センターピボット農法が引き起こす3つの問題点は？", a: "①地下水の枯渇 ②散水した水の蒸発による「塩害」 ③化学肥料による地下水汚染", exp: "持続不可能性が問題化。" },
+            { id: 126, cat: "desert", catName: "砂漠・環境破壊", q: "アラル海に流入していた2つの河川の名称は？", a: "アムダリア川、シルダリア川", exp: "中央アジアの大湖。" },
+            { id: 127, cat: "desert", catName: "砂漠・環境破壊", q: "1960年代にソ連が行ったアラル海周辺での灌漑事業（自然改造計画）の目的作物は？", a: "綿花（めんか）", exp: "河川からの流入水量が激減。" },
+            { id: 128, cat: "desert", catName: "砂漠・環境破壊", q: "アラル海の縮小・干上がりがもたらした3つの甚大な環境・社会被害は？", a: "①綿花栽培や漁業の崩壊（雇用の消滅）\n②雨量減少と気温上昇（気候の荒廃）\n③湖底の塩・毒物を含んだ「砂嵐」の発生", exp: "世紀の環境破壊事例。" },
+            { id: 129, cat: "desert", catName: "砂漠・環境破壊", q: "カザフスタン政府と世界銀行がアラル海（小アラル海）の水位回復のため建設した構造物は？", a: "コカラル堤防", exp: "北側の水位回復に貢献。" },
+            { id: 130, cat: "desert", catName: "砂漠・環境破壊", q: "アラル海縮小問題における「外来河川」の地理的定義は何か？", a: "湿潤地帯に源流をもち、乾燥地帯を貫流して流れる河川（ナイル川、アムダリア川など）", exp: "乾燥地域の生命線となる河川。" }
+        ];
+
+        let currentCards = [...rawCards];
+        let normalDeck = [...rawCards];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let bookmarks = new Set();
+        // 正誤判定の記録。retryQueueには再挑戦が必要な問題だけを入れる。
+        let mode = 'normal'; // normal / retry / finished / retryFinished
+        let gradedIds = new Set();
+        let wrongIds = new Set();
+        let retryQueue = [];
+        let retryOriginalIds = [];
+
+        const gradingPanel = document.getElementById('gradingPanel');
+        const gradingPrompt = document.getElementById('gradingPrompt');
+        const resultPanel = document.getElementById('resultPanel');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultText = document.getElementById('resultText');
+        const correctBtn = document.getElementById('correctBtn');
+        const incorrectBtn = document.getElementById('incorrectBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        const normalBtn = document.getElementById('normalBtn');
+        const navigation = document.getElementById('navigation');
+
+        const cardContainer = document.getElementById('cardContainer');
+        const cardInner = document.getElementById('cardInner');
+        const cardQuestion = document.getElementById('cardQuestion');
+        const cardAnswer = document.getElementById('cardAnswer');
+        const cardExplanation = document.getElementById('cardExplanation');
+        const cardIdTag = document.getElementById('cardIdTag');
+        const categoryBadge = document.getElementById('categoryBadge');
+        const progressText = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
+        const categoryFilter = document.getElementById('categoryFilter');
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const bookmarkBtn = document.getElementById('bookmarkBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function renderCard() {
+            if (currentCards.length === 0) return;
+            const card = currentCards[currentIndex];
+            
+            cardQuestion.innerText = card.q;
+            cardAnswer.innerText = card.a;
+            cardExplanation.innerText = card.exp;
+            cardIdTag.innerText = `Q.${String(card.id).padStart(3, '0')}`;
+            categoryBadge.innerText = card.catName;
+
+            progressText.innerText = `${currentIndex + 1} / ${currentCards.length}`;
+            const percent = ((currentIndex + 1) / currentCards.length) * 100;
+            progressBar.style.width = `${percent}%`;
+
+            const isBookmarked = bookmarks.has(card.id);
+            bookmarkBtn.innerHTML = isBookmarked 
+                ? `<i></i><span class="hidden">保存済</span>`
+                : `<i></i><span class="hidden">ブックマーク</span>`;
+
+            if (isFlipped) {
+                isFlipped = false;
+                cardInner.classList.remove('rotate-y-180');
+            }
+            gradingPanel.classList.add('hidden');
+            gradingPrompt.innerText = mode === 'retry'
+                ? '答えを確認して、もう一度判定してください。'
+                : '答えを確認して、自分の回答を判定してください。';
+        }
+
+        function toggleFlip() {
+            if (mode === 'finished' || mode === 'retryFinished') return;
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                cardInner.classList.add('rotate-y-180');
+                gradingPanel.classList.remove('hidden');
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+                gradingPanel.classList.add('hidden');
+            }
+        }
+
+        function nextCard() {
+            if (currentIndex < currentCards.length - 1) {
+                currentIndex++;
+            } else {
+                currentIndex = 0;
+            }
+            renderCard();
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+            } else {
+                currentIndex = currentCards.length - 1;
+            }
+            renderCard();
+        }
+
+        function shuffleCards() {
+            for (let i = currentCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+            }
+            currentIndex = 0;
+            renderCard();
+        }
+
+        function showResult(title, message, showRetry, showRedo, showNormal) {
+            resultTitle.innerText = title;
+            resultText.innerText = message;
+            resultPanel.classList.remove('hidden');
+            gradingPanel.classList.add('hidden');
+            navigation.classList.add('hidden');
+            cardContainer.classList.add('hidden');
+            retryBtn.classList.toggle('hidden', !showRetry);
+            redoBtn.classList.toggle('hidden', !showRedo);
+            normalBtn.classList.toggle('hidden', !showNormal);
+            isFlipped = false;
+            cardInner.classList.remove('rotate-y-180');
+        }
+
+        function hideResult() {
+            resultPanel.classList.add('hidden');
+            navigation.classList.remove('hidden');
+            cardContainer.classList.remove('hidden');
+        }
+
+        function gradeCurrent(isCorrect) {
+            if (!isFlipped || !currentCards.length) return;
+            const card = currentCards[currentIndex];
+            if (mode === 'normal') {
+                gradedIds.add(card.id);
+                if (isCorrect) wrongIds.delete(card.id);
+                else wrongIds.add(card.id);
+                if (gradedIds.size >= normalDeck.length) {
+                    currentCards = normalDeck.filter(c => wrongIds.has(c.id));
+                    currentIndex = 0;
+                    if (currentCards.length === 0) {
+                        mode = 'finished';
+                        showResult('全問正解！', '130問すべて正解です。おつかれさまでした！', false, false, true);
+                    } else {
+                        mode = 'finished';
+                        showResult('採点結果', `正解：${normalDeck.length - wrongIds.size}問　／　不正解：${wrongIds.size}問
+間違えた問題だけをもう一度解くことができます。`, true, false, true);
+                    }
+                    return;
+                }
+                // 未判定の問題を順番に続ける
+                const remaining = normalDeck.filter(c => !gradedIds.has(c.id));
+                currentCards = remaining;
+                currentIndex = 0;
+                renderCard();
+                return;
+            }
+            if (mode === 'retry') {
+                if (isCorrect) {
+                    retryQueue = retryQueue.filter(id => id !== card.id);
+                }
+                // 不正解ならキューに残す。残りの問題を一周する。
+                if (retryQueue.length === 0) {
+                    mode = 'retryFinished';
+                    showResult('やり直し完了！', '今回の間違い問題はすべて正解できました。もう一度最初から確認することもできます。', false, true, true);
+                    return;
+                }
+                const currentPos = retryQueue.indexOf(card.id);
+                const nextId = retryQueue.length ? retryQueue[(Math.max(currentPos, 0)) % retryQueue.length] : null;
+                // 不正解の問題は末尾へ回し、正解した問題は取り除く
+                if (!isCorrect && nextId === card.id && retryQueue.length > 1) {
+                    retryQueue.push(retryQueue.shift());
+                }
+                currentCards = retryQueue.map(id => rawCards.find(c => c.id === id)).filter(Boolean);
+                currentIndex = 0;
+                renderCard();
+            }
+        }
+
+        function startRetry() {
+            retryOriginalIds = [...wrongIds];
+            retryQueue = [...retryOriginalIds];
+            if (retryQueue.length === 0) return;
+            mode = 'retry';
+            currentCards = retryQueue.map(id => rawCards.find(c => c.id === id)).filter(Boolean);
+            currentIndex = 0;
+            hideResult();
+            renderCard();
+            gradingPrompt.innerText = '間違えた問題だけを再挑戦中です。正解できた問題は一覧から外れます。';
+        }
+
+        function redoRetry() {
+            retryQueue = [...retryOriginalIds];
+            mode = 'retry';
+            currentCards = retryQueue.map(id => rawCards.find(c => c.id === id)).filter(Boolean);
+            currentIndex = 0;
+            hideResult();
+            renderCard();
+        }
+
+        function returnToNormal() {
+            mode = 'normal';
+            gradedIds.clear();
+            wrongIds.clear();
+            retryQueue = [];
+            retryOriginalIds = [];
+            currentCards = [...rawCards];
+            normalDeck = [...rawCards];
+            currentIndex = 0;
+            categoryFilter.value = 'all';
+            hideResult();
+            renderCard();
+        }
+
+        correctBtn.addEventListener('click', (e) => { e.stopPropagation(); gradeCurrent(true); });
+        incorrectBtn.addEventListener('click', (e) => { e.stopPropagation(); gradeCurrent(false); });
+        retryBtn.addEventListener('click', startRetry);
+        redoBtn.addEventListener('click', redoRetry);
+        normalBtn.addEventListener('click', returnToNormal);
+
+        categoryFilter.addEventListener('change', (e) => {
+            const val = e.target.value;
+            mode = 'normal';
+            gradedIds.clear(); wrongIds.clear(); retryQueue = []; retryOriginalIds = [];
+            hideResult();
+            if (val === 'all') {
+                currentCards = [...rawCards];
+            } else {
+                currentCards = rawCards.filter(c => c.cat === val);
+            }
+            normalDeck = [...currentCards];
+            currentIndex = 0;
+            renderCard();
+        });
+
+        bookmarkBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = currentCards[currentIndex];
+            if (bookmarks.has(card.id)) {
+                bookmarks.delete(card.id);
+            } else {
+                bookmarks.add(card.id);
+            }
+            renderCard();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            returnToNormal();
+        });
+
+        cardContainer.addEventListener('click', toggleFlip);
+        nextBtn.addEventListener('click', nextCard);
+        prevBtn.addEventListener('click', prevCard);
+        shuffleBtn.addEventListener('click', shuffleCards);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextCard();
+            else if (e.key === 'ArrowLeft') prevCard();
+            else if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleFlip();
+            }
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        cardContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        cardContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeDistance = touchEndX - touchStartX;
+            if (Math.abs(swipeDistance) > 50) {
+                if (swipeDistance < 0) nextCard();
+                else prevCard();
+            }
+        }, { passive: true });
+
+        window.onload = function() {
+            renderCard();
+        };
+    </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(err => console.warn('オフライン設定:', err)));
+}
+</script>
+</body>
+</html>
